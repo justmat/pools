@@ -1,2 +1,2 @@
 # vinny
-a shifty little reverb for norns
+a WIP reverb for norns
