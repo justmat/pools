@@ -6,26 +6,11 @@
 -- @justmat
 
 engine.name = "Vinny"
-
+local lfo = include "lib/hnds_vinny"
 
 local alt = false
 
 local dry_lvl = {15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0}
-
-
-function scale(old_value, old_min, old_max, new_min, new_max)
-  -- scale ranges
-  local old_range = old_max - old_min
-
-  if old_range == 0 then
-    old_range = new_min
-  end
-
-  local new_range = new_max - new_min
-  local new_value = (((old_value - old_min) * new_range) / old_range) + new_min
-
-  return new_value
-end
 
 
 function init()
@@ -126,9 +111,9 @@ end
 
 local function draw_mix()
   
-  local dry = math.floor(scale(params:get("dry"), 0, 1, 0, 15))
-  local verb = math.floor(scale(params:get("verb"), 0, 1, 0, 15))
-  local sparkle = math.floor(scale(params:get("sparkle"), 0, 1, 0, 15))
+  local dry = math.floor(lfo.scale(params:get("dry"), 0, 1, 0, 15))
+  local verb = math.floor(lfo.scale(params:get("verb"), 0, 1, 0, 15))
+  local sparkle = math.floor(lfo.scale(params:get("sparkle"), 0, 1, 0, 15))
   
   screen.clear()
   screen.aa(1)
