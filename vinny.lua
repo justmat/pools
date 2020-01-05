@@ -150,7 +150,7 @@ local function draw_mix()
   end
   -- sparkle
   for i = 1, sparkle do
-    screen.level(math.random(6))
+    screen.level(math.random(15))
     local x = math.random(0, 127)
     local y = math.random(32, 64)
     screen.move(x, y)
