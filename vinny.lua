@@ -23,7 +23,7 @@ function init()
   params:set_action("verb", function(v) engine.verb(v) end)
   -- sparkle volume
   params:add_control("sparkle", "sparkle", controlspec.new(0.00, 1.00, "lin", 0.01, 0.2))
-  params:set_action("sparkle", function(v) engine.sparkle(v * .25) end)
+  params:set_action("sparkle", function(v) engine.sparkle(v) end)
 
   params:add_separator()
 
