@@ -7,10 +7,19 @@
 
 engine.name = "Vinny"
 local lfo = include "lib/hnds_vinny"
+local FilterGraph = require "filtergraph"
 
+local page = 2
 local alt = false
 
 local dry_lvl = {15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0}
+
+
+local function update_fg()
+  -- keeps the filter graph current
+  local ftype = params:get("type") == 0 and "lowpass" or "highpass"
+  filter:edit(ftype, 12, params:get("freq"), params:get("res"))
+end
 
 
 function init()
@@ -24,6 +33,22 @@ function init()
   -- sparkle volume
   params:add_control("sparkle", "sparkle", controlspec.new(0.00, 1.00, "lin", 0.01, 0.2))
   params:set_action("sparkle", function(v) engine.sparkle(v) end)
+
+  params:add_separator()
+
+  -- filter params
+  -- freq
+  params:add_control("freq", "freq", controlspec.WIDEFREQ)
+  params:set_action("freq", function(v) engine.freq(v) end)
+  -- resonance/q
+  params:add_control("res", "res", controlspec.UNIPOLAR)
+  params:set_action("res", function(v) engine.res(v) end)
+  -- input gain
+  params:add_control("gain", "gain", controlspec.new(0.00, 5.00, "lin", 0.01, 1.00))
+  params:set_action("gain", function(v) engine.gain(v) end)
+  -- filter type lp/hp
+  params:add_number("type", "type", 0, 1, 0)
+  params:set_action("type", function(v) engine.type(v) end)
 
   params:add_separator()
 
@@ -84,6 +109,9 @@ function init()
   params:set_action("pitchRatio", function(v) engine.pitchRatio(v) end)
   params:bang()
 
+  filter = FilterGraph.new()
+  filter:set_position_and_size(5, 5, 118, 64)
+
   -- screen metro
   screen_timer = metro.init()
   screen_timer.time = 1/15
@@ -95,16 +123,34 @@ end
 
 function key(n, z)
   if n == 1 then alt = z == 1 and true or false end
+  
+  if z == 1 then
+    if n == 2 then
+      page = 1
+    elseif n == 3 then
+      page = 2
+    end
+  end
 end
 
 
 function enc(n, d)
-  if n == 1 then
-    params:delta("dry", d)
-  elseif n == 2 then
-    params:delta("verb", d)
-  elseif n == 3 then
-    params:delta("sparkle", d)
+  if page == 1 then
+    if n == 1 then
+      params:delta("type", d)
+    elseif n == 2 then
+      params:delta("freq", d)
+    elseif n == 3 then
+      params:delta("res", d)
+    end
+  else
+    if n == 1 then
+      params:delta("dry", d)
+    elseif n == 2 then
+      params:delta("verb", d)
+    elseif n == 3 then
+      params:delta("sparkle", d)
+    end
   end
 end
 
@@ -150,8 +196,20 @@ local function draw_mix()
 end
 
 
+local function draw_filter()
+  update_fg()
+  screen.clear()
+  filter:redraw()
+  screen.update()
+end
+
+
 function redraw()
-  draw_mix()
+  if page == 1 then
+    draw_filter()
+  else
+    draw_mix()
+  end
 end
 
   
