@@ -22,7 +22,7 @@ Engine_Vinny : CroneEngine {
             shifted = PitchShift.ar(wet, windowSize, pitchRatio, pitchDispersion, timeDispersion);
 
             LocalOut.ar(shifted * sparkle);
-
+            wet = LeakDC.ar(wet);
             mix = Mix.new([dry * amp, wet * verb]);
 			
 			Out.ar(out, mix);
