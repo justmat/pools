@@ -11,19 +11,19 @@ Engine_Vinny : CroneEngine {
 		  t60=1.0, damp=0, size=1.0, diff=0.507, modDepth=0.1, modFreq=2.0, low=1.0, mid=1.0, high=1.0, lowcut=500.0, highcut=2000.0,
 		  windowSize=0.5, pitchRatio=2.0, pitchDispersion=0.0, timeDispersion=0.02|
       
-      var dry, wet, shifted, local, mix;
+            var dry, wet, shifted, local, mix;
       
-      dry = [In.ar(inL), In.ar(inR)];
-      dry = DFM1.ar(dry, freq, res, gain, type, noiseLevel).softclip;
+            dry = [In.ar(inL), In.ar(inR)];
+            dry = DFM1.ar(dry, freq, res, gain, type, noiseLevel).softclip;
 
-			local = LocalIn.ar(2);
+            local = LocalIn.ar(2);
       
-      wet = JPverb.ar(dry + local, t60, damp, size, diff, modDepth, modFreq, low, mid, high, lowcut, highcut);
-      shifted = PitchShift.ar(wet, windowSize, pitchRatio, pitchDispersion, timeDispersion);
+            wet = JPverb.ar(dry + local, t60, damp, size, diff, modDepth, modFreq, low, mid, high, lowcut, highcut);
+            shifted = PitchShift.ar(wet, windowSize, pitchRatio, pitchDispersion, timeDispersion);
 
-      LocalOut.ar(shifted * sparkle);
-      
-      mix = Mix.new([dry * amp, wet * verb]);
+            LocalOut.ar(shifted * sparkle);
+
+            mix = Mix.new([dry * amp, wet * verb]);
 			
 			Out.ar(out, mix);
 		}).add;
