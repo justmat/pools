@@ -7,18 +7,23 @@ Engine_Vinny : CroneEngine {
 	}
 
 	alloc {
-		SynthDef(\synth, {|inL, inR, out, sparkle=0.00, verb=0.5, amp=0, freq=1000.0, res=0.1, gain=1.0, type=0.0, noiseLevel=0.0003,
+		SynthDef(\synth, { |inL, inR, out, sparkle=0.00, verb=0.5, amp=0, freq=1000.0, res=0.1, gain=1.0, type=0.0, noiseLevel=0.0003,
 		  t60=1.0, damp=0, size=1.0, diff=0.507, modDepth=0.1, modFreq=2.0, low=1.0, mid=1.0, high=1.0, lowcut=500.0, highcut=2000.0,
-		  windowSize=0.5, pitchRatio=4.0, pitchDispersion=0.0, timeDispersion=0.02|
+		  windowSize=0.5, pitchRatio=2.0, pitchDispersion=0.0, timeDispersion=0.02|
       
-      var dry, wet, shifted, mix;
+      var dry, wet, shifted, local, mix;
       
-			dry = [In.ar(inL), In.ar(inR)];
-			
-			dry = DFM1.ar(dry, freq, res, gain, type, noiseLevel).softclip;
-			wet = JPverb.ar(dry, t60, damp, size, diff, modDepth, modFreq, low, mid, high, lowcut, highcut);
-			shifted = PitchShift.ar(wet, windowSize, pitchRatio, pitchDispersion, timeDispersion);
-			mix = Mix.new([dry * amp, shifted * sparkle, wet * verb]);
+      dry = [In.ar(inL), In.ar(inR)];
+      dry = DFM1.ar(dry, freq, res, gain, type, noiseLevel).softclip;
+
+			local = LocalIn.ar(2);
+      
+      wet = JPverb.ar(dry + local, t60, damp, size, diff, modDepth, modFreq, low, mid, high, lowcut, highcut);
+      shifted = PitchShift.ar(wet, windowSize, pitchRatio, pitchDispersion, timeDispersion);
+
+      LocalOut.ar(shifted * sparkle);
+      
+      mix = Mix.new([dry * amp, wet * verb]);
 			
 			Out.ar(out, mix);
 		}).add;
