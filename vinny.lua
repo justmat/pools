@@ -38,7 +38,7 @@ function init()
 
   -- filter params
   -- freq
-  params:add_control("freq", "freq", controlspec.WIDEFREQ)
+  params:add_control("freq", "freq", controlspec.new(0.01, 20000, "exp", 0, 20000))
   params:set_action("freq", function(v) engine.freq(v) end)
   -- resonance/q
   params:add_control("res", "res", controlspec.UNIPOLAR)
@@ -65,7 +65,7 @@ function init()
   -- early diffusion: controls shape of early reflections
   params:add_control("diff", "diff", controlspec.new(0.00, 1.00, "lin", 0.01, 0.70))
   params:set_action("diff", function(v) engine.diff(v) end)
-
+  
   params:add_separator()
 
   -- reverb modulation params
@@ -180,13 +180,15 @@ local function draw_mix()
     screen.text_center("verb!")
   end
   -- sparkle
-  for i = 1, sparkle do
-    screen.level(math.random(15))
-    local x = math.random(0, 127)
-    local y = math.random(32, 64)
-    screen.move(x, y)
-    screen.circle(x, y, math.random(1))
-    screen.stroke()
+  if  verb > 0 then
+    for i = 1, sparkle do
+      screen.level(math.random(15))
+      local x = math.random(0, 127)
+      local y = math.random(32, 64)
+      screen.move(x, y)
+      screen.circle(x, y, math.random(1))
+      screen.stroke()
+    end
   end
   screen.move(64, 58)
   screen.font_face(15)
