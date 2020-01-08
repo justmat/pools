@@ -65,7 +65,7 @@ function init()
   -- early diffusion: controls shape of early reflections
   params:add_control("diff", "diff", controlspec.new(0.00, 1.00, "lin", 0.01, 0.70))
   params:set_action("diff", function(v) engine.diff(v) end)
-  
+
   params:add_separator()
 
   -- reverb modulation params
@@ -125,7 +125,7 @@ end
 
 function key(n, z)
   if n == 1 then alt = z == 1 and true or false end
-  
+
   if z == 1 then
     if n == 2 then
       page = util.clamp(page - 1, 1, 3)
@@ -176,11 +176,11 @@ end
 
 
 local function draw_mix()
-  
+
   local dry = math.floor(lfo.scale(params:get("dry"), 0, 1, 0, 15))
   local verb = math.floor(lfo.scale(params:get("verb"), 0, 1, 0, 15))
   local shimmer = math.floor(lfo.scale(params:get("shimmer"), 0, 1, 0, 15))
-  
+
   screen.clear()
   screen.aa(1)
   screen.font_face(13)
@@ -193,7 +193,6 @@ local function draw_mix()
   screen.level(dry_lvl[dry + 1])
   screen.text("dry")
   -- verb!
-  --screen.font_face(13)
   screen.font_size(24)
   for i=1, verb do
     screen.move(82 + i, 22+i)
