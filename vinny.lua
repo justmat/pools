@@ -14,11 +14,54 @@ local alt = false
 
 local dry_lvl = {15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0}
 
+local lfo_targets = {
+  "none",
+  "dry",
+  "verb",
+  "shimmer",
+  "freq",
+  "res",
+  "time",
+  "damp",
+  "size",
+  "diff",
+  "lowx",
+  "midx",
+  "highx",
+  "pitchDisp",
+  "timeDisp"
+}
+
 
 local function update_fg()
   -- keeps the filter graph current
   local ftype = params:get("type") == 0 and "lowpass" or "highpass"
   filter:edit(ftype, 12, params:get("freq"), params:get("res"))
+end
+
+
+function lfo.process()
+  -- for lib hnds
+  for i = 1, 4 do
+    local target = params:get(i .. "lfo_target")
+    if params:get(i .. "lfo") == 2 then
+      if lfo_targets[target] == "freq" then
+        -- pre verb filter freq
+        params:set(lfo_targets[target], lfo.scale(lfo[i].slope, -1.0, 2.0, 0, 20000))
+      elseif lfo_targets[target] == "time" then
+        -- reverb time/ t60
+        params:set(lfo_targets[target], lfo.scale(lfo[i].slope, -1.0, 2.0, 0, 60))
+      elseif lfo_targets[target] == "size" then
+        -- reverb size
+        params:set(lfo_targets[target], lfo.scale(lfo[i].slope, -1.0, 2.0, 0.50, 5.00))
+      elseif lfo_targets[target] == "timeDisp" then
+        -- pitch shift time dispertion
+        params:set(lfo_targets[target], lfo.scale(lfo[i].slope, -1.0, 2.0, 0.00, 0.50))
+      else
+        params:set(lfo_targets[target], lfo.scale(lfo[i].slope, -1.0, 2.0, 0.00, 1.00))
+      end
+    end
+  end
 end
 
 
@@ -107,6 +150,12 @@ function init()
   -- pitch ratio: amount to pitchshift by
   params:add_control("pitchRatio", "pitchRatio", controlspec.new(0.0, 4.0, "lin", 0, 2.0))
   params:set_action("pitchRatio", function(v) engine.pitchRatio(v) end)
+
+  for i = 1, 4 do
+    lfo[i].lfo_targets = lfo_targets
+  end
+  lfo.init()
+
   params:bang()
 
   filter = FilterGraph.new()
