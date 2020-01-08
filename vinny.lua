@@ -161,7 +161,7 @@ function init()
   filter = FilterGraph.new()
   filter:set_position_and_size(0, 0, 127, 64)
 
-  norns.enc.sens(0, 4)
+  norns.enc.sens(0, 3)
 
   -- screen metro
   screen_timer = metro.init()
