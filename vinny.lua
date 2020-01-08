@@ -108,10 +108,6 @@ function init()
   -- early diffusion: controls shape of early reflections
   params:add_control("diff", "diff", controlspec.new(0.00, 1.00, "lin", 0.01, 0.70))
   params:set_action("diff", function(v) engine.diff(v) end)
-
-  params:add_separator()
-
-  -- reverb modulation params
   -- modulation depth
   params:add_control("modDepth", "mod depth", controlspec.new(0, 50, "lin", 0, 1))
   params:set_action("modDepth", function(v) engine.modDepth(v) end)
