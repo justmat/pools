@@ -31,8 +31,8 @@ function init()
   params:add_control("verb", "verb", controlspec.new(0.00, 1.00, "lin", 0.01, 0.5))
   params:set_action("verb", function(v) engine.verb(v) end)
   -- sparkle volume
-  params:add_control("sparkle", "sparkle", controlspec.new(0.00, 1.00, "lin", 0.01, 0.2))
-  params:set_action("sparkle", function(v) engine.sparkle(v) end)
+  params:add_control("shimmer", "shimmer", controlspec.new(0.00, 1.00, "lin", 0.01, 0.2))
+  params:set_action("shimmer", function(v) engine.shimmer(v) end)
 
   params:add_separator()
 
@@ -112,6 +112,8 @@ function init()
   filter = FilterGraph.new()
   filter:set_position_and_size(0, 0, 127, 64)
 
+  norns.enc.sens(0, 4)
+
   -- screen metro
   screen_timer = metro.init()
   screen_timer.time = 1/15
@@ -126,9 +128,9 @@ function key(n, z)
   
   if z == 1 then
     if n == 2 then
-      page = 1
+      page = util.clamp(page - 1, 1, 3)
     elseif n == 3 then
-      page = 2
+      page = util.clamp(page + 1, 1, 3)
     end
   end
 end
@@ -143,13 +145,31 @@ function enc(n, d)
     elseif n == 3 then
       params:delta("res", d)
     end
-  else
+  elseif page == 2 then
     if n == 1 then
       params:delta("dry", d)
     elseif n == 2 then
       params:delta("verb", d)
     elseif n == 3 then
-      params:delta("sparkle", d)
+      params:delta("shimmer", d)
+    end
+  else
+    if alt then
+      if n == 1 then
+        params:delta("lowx", d)
+      elseif n == 2 then
+        params:delta("midx", d)
+      elseif n == 3 then
+        params:delta("highx", d)
+      end
+    else
+      if n == 1 then
+        params:delta("time", d)
+      elseif n == 2 then
+        params:delta("damp", d)
+      elseif n == 3 then
+        params:delta("diff", d)
+      end
     end
   end
 end
@@ -159,12 +179,13 @@ local function draw_mix()
   
   local dry = math.floor(lfo.scale(params:get("dry"), 0, 1, 0, 15))
   local verb = math.floor(lfo.scale(params:get("verb"), 0, 1, 0, 15))
-  local sparkle = math.floor(lfo.scale(params:get("sparkle"), 0, 1, 0, 15))
+  local shimmer = math.floor(lfo.scale(params:get("shimmer"), 0, 1, 0, 15))
   
   screen.clear()
   screen.aa(1)
   screen.font_face(13)
   -- dry
+  screen.font_size(24)
   screen.level(15)
   screen.rect(4, 4, 42, 27)
   screen.fill()
@@ -172,16 +193,16 @@ local function draw_mix()
   screen.level(dry_lvl[dry + 1])
   screen.text("dry")
   -- verb!
-  screen.font_face(13)
+  --screen.font_face(13)
   screen.font_size(24)
   for i=1, verb do
     screen.move(82 + i, 22+i)
     screen.level(i)
     screen.text_center("verb!")
   end
-  -- sparkle
+  -- shimmer
   if  verb > 0 then
-    for i = 1, sparkle do
+    for i = 1, shimmer do
       screen.level(math.random(15))
       local x = math.random(0, 127)
       local y = math.random(32, 64)
@@ -191,9 +212,10 @@ local function draw_mix()
     end
   end
   screen.move(64, 58)
-  screen.font_face(15)
-  screen.level(sparkle)
-  screen.text_center("sparkle")
+  screen.font_face(23)
+  screen.font_size(24)
+  screen.level(shimmer)
+  screen.text_center("shimmer")
   screen.update()
 end
 
@@ -206,12 +228,51 @@ local function draw_filter()
 end
 
 
+local function draw_edit()
+  screen.clear()
+  screen.font_face(7)
+  screen.font_size(16)
+  screen.level(alt and 2 or 8)
+  -- time
+  screen.move(1, 60)
+  screen.text("tm")
+  screen.rect(7, 46, 6, -lfo.scale(params:get("time"), 0, 60, 0, 40))
+  -- dampening
+  screen.move(25, 60)
+  screen.text("dp")
+  screen.rect(31, 46, 6, -lfo.scale(params:get("damp"), 0, 1, 0, 40))
+  -- diffusion
+  screen.move(49, 60)
+  screen.text("df")
+  screen.rect(55, 46, 6, -lfo.scale(params:get("diff"), 0, 1, 0, 40))
+
+  screen.fill()
+  screen.stroke()
+  screen.level(alt and 8 or 2)
+  -- pitch dispertion
+  screen.move(75, 60)
+  screen.text("L")
+  screen.rect(77, 46, 6, -lfo.scale(params:get("lowx"), 0, 1, 0, 40))
+  -- time dispertion
+  screen.move(93, 60)
+  screen.text("M")
+  screen.rect(97, 46, 6, -lfo.scale(params:get("midx"), 0, 1, 0, 40))
+  -- pitch ratio
+  screen.move(114, 60)
+  screen.text("H")
+  screen.rect(117, 46, 6, -lfo.scale(params:get("highx"), 0, 1, 0, 40))
+  screen.fill()
+  screen.stroke()
+  screen.update()
+end
+
+
 function redraw()
   if page == 1 then
     draw_filter()
-  else
+  elseif page == 2 then
     draw_mix()
+  else
+    draw_edit()
   end
 end
-
-  
