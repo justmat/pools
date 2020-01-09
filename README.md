@@ -10,7 +10,7 @@ key 1 is **alt**.
 
 ### filter
 
-![poolfilter](assets/poolfilter.png)
+![poolfilter](assets/poolfilter-m.png)
 
 this is the input filter.
 
@@ -21,7 +21,7 @@ this is the input filter.
 
 ### mix
 
-![poolfilter](assets/poolmix.png)
+![poolfilter](assets/poolmix-m.png)
 
 * encoder 1: dry level
 * encoder 2: wet level
@@ -30,7 +30,7 @@ this is the input filter.
 
 ### edit
 
-![poolfilter](assets/pooledit.png)
+![poolfilter](assets/pooledit-m.png)
 
 * encoder 1: reverb time
 * encoder 2: reverb dampening
