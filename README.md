@@ -70,4 +70,4 @@ holding alt shifts control to reverb eq/filtering.
 ----
 * pitchDisp - pitch shifting, random pitch variation
 * timeDisp - pitch shifting delay
-* pitchRatio - pitch shifting freq (1 is nominal rate, 2 is an octave, 4 is two octaves etc...)
+* pitchRatio - pitch shifting freq (1 is nominal pitch rate, 2 is an octave, 4 is two octaves etc...)
