@@ -3,7 +3,7 @@
 
 a shimmery reverb for norns
 
-## control
+# control
 
 there are three pages, **filter**, **mix**, and **edit**. navigate using key 2/3. 
 key 1 is **alt**.
