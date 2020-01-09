@@ -240,7 +240,7 @@ local function draw_mix()
   -- verb!
   screen.font_size(24)
   for i=1, verb do
-    screen.move(82 + i, 22+i)
+    screen.move(82 + i, 26 + i)
     screen.font_size(32)
     screen.level(i)
     screen.text_center("wet!")
